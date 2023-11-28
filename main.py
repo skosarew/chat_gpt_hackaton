@@ -1,7 +1,5 @@
-import ast
 import os
 
-import pandas as pd
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from openai import OpenAI
