@@ -1,0 +1,8 @@
+openai
+python-dotenv
+pandas
+tiktoken
+scipy
+beautifulsoup4
+contentful
+matplotlib
