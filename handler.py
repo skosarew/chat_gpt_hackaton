@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from scipy import spatial
 
+from helpers import num_tokens
+
 load_dotenv()
 api_key = os.environ.get('OPENAI_API_KEY')
 
@@ -28,7 +30,7 @@ class OpenAPIHandler:
         message = ''
         for string in strings:
             if (
-                self.num_tokens(message + string + question, model=model)
+                num_tokens(message + string + question, model=model)
                 > token_budget
             ):
                 break
@@ -55,7 +57,3 @@ class OpenAPIHandler:
         strings, relatednesses = zip(*strings_and_relatednesses)
 
         return strings[:top_n], relatednesses[:top_n]
-
-    def num_tokens(self, text: str, model: str) -> int:
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
