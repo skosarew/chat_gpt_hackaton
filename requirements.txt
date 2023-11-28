@@ -6,3 +6,5 @@ scipy
 beautifulsoup4
 contentful
 matplotlib
+flake8
+isort
