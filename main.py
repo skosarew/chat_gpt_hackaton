@@ -37,12 +37,12 @@ async def ask(body: Model):
     thread = client.beta.threads.create()
     handler = OpenAPIHandler(body.question)
 
-    message_ = handler.make_question(df)
+    question = handler.make_question(df)
 
     client.beta.threads.messages.create(
         thread_id=thread.id,
         role='user',
-        content=message_,
+        content=question,
     )
 
     run = client.beta.threads.runs.create(

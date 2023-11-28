@@ -9,10 +9,6 @@ from scipy import spatial
 load_dotenv()
 api_key = os.environ.get('OPENAI_API_KEY')
 
-# models
-EMBEDDING_MODEL = 'text-embedding-ada-002'
-GPT_MODEL = 'gpt-3.5-turbo'
-
 
 class OpenAPIHandler:
     def __init__(self, question):
@@ -47,7 +43,7 @@ class OpenAPIHandler:
     ) -> tuple[list[str], list[float]]:
         client = OpenAI(api_key=api_key)
 
-        query_embedding_response = client.embeddings.create(model=EMBEDDING_MODEL, input=query)
+        query_embedding_response = client.embeddings.create(model='text-embedding-ada-002', input=query)
         query_embedding = query_embedding_response.data[0].embedding
         strings_and_relatednesses = [
             (row['text'], relatedness_fn(query_embedding, row['embedding']))
@@ -58,6 +54,6 @@ class OpenAPIHandler:
 
         return strings[:top_n], relatednesses[:top_n]
 
-    def num_tokens(self, text: str, model: str = GPT_MODEL) -> int:
+    def num_tokens(self, text: str, model: str) -> int:
         encoding = tiktoken.encoding_for_model(model)
         return len(encoding.encode(text))
