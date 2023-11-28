@@ -1,3 +1,4 @@
+import ast
 import os
 
 import pandas as pd
@@ -9,6 +10,9 @@ from scipy import spatial
 load_dotenv()
 api_key = os.environ.get('OPENAI_API_KEY')
 
+df = pd.read_csv('./data.csv')
+df['embedding'] = df['embedding'].apply(ast.literal_eval)
+
 
 class OpenAPIHandler:
     def __init__(self, question):
@@ -16,11 +20,10 @@ class OpenAPIHandler:
 
     def make_question(
         self,
-        df: pd.DataFrame,
         token_budget: int = 4096 - 500,
         model: str = 'gpt-4',
     ) -> str:
-        strings, _ = self.strings_ranked_by_relatedness(self.question, df)
+        strings, _ = self.strings_ranked_by_relatedness(self.question)
         question = f'\n\nQuestion: {self.question}'
         message = ''
         for string in strings:
@@ -37,7 +40,6 @@ class OpenAPIHandler:
     def strings_ranked_by_relatedness(
         self,
         query: str,
-        df: pd.DataFrame,
         relatedness_fn=lambda x, y: 1 - spatial.distance.cosine(x, y),
         top_n: int = 100,
     ) -> tuple[list[str], list[float]]:

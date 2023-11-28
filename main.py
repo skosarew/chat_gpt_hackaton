@@ -13,10 +13,6 @@ load_dotenv()
 
 api_key = os.environ.get('OPENAI_API_KEY')
 client = OpenAI(api_key=api_key)
-
-df = pd.read_csv('./data.csv')
-df['embedding'] = df['embedding'].apply(ast.literal_eval)
-
 assistant = client.beta.assistants.create(
     name='Adjust Advisor',
     instructions='Adjust is an IT-company. You are an customer support expert in various Adjusts product. Use the '
@@ -24,6 +20,7 @@ assistant = client.beta.assistants.create(
                  'the articles. If the answer cannot be found in the articles, write "I could not find an answer."',
     model='gpt-4-1106-preview',
 )
+
 app = FastAPI()
 
 
@@ -37,7 +34,7 @@ async def ask(body: Model):
     thread = client.beta.threads.create()
     handler = OpenAPIHandler(body.question)
 
-    question = handler.make_question(df)
+    question = handler.make_question()
 
     client.beta.threads.messages.create(
         thread_id=thread.id,
