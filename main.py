@@ -1,25 +1,45 @@
 import os
+from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from openai import OpenAI
 
 from handler import OpenAPIHandler
 from models import Model
 
-load_dotenv()
 
-api_key = os.environ.get('OPENAI_API_KEY')
-client = OpenAI(api_key=api_key)
-assistant = client.beta.assistants.create(
-    name='Adjust Advisor',
-    instructions='Adjust is an IT-company. You are an customer support expert in various Adjusts product. Use the '
-                 'below articles from Adjust help center to answer the subsequent question. Search for information in '
-                 'the articles. If the answer cannot be found in the articles, write "I could not find an answer."',
-    model='gpt-4-1106-preview',
-)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    load_dotenv()
 
-app = FastAPI()
+    api_key = os.environ.get('OPENAI_API_KEY')
+    client = OpenAI(api_key=api_key)
+    app.state.client = client
+
+    assistants = client.beta.assistants.list(limit=100).data
+
+    for assistant in assistants:
+        if assistant.name == 'Adjust Advisor':
+            app.state.assistant = assistant
+            break
+    else:
+        assistant = client.beta.assistants.create(
+            name='Adjust Advisor',
+            instructions='Adjust is an IT-company. You are an customer support expert in various Adjusts product. Use '
+                         'the '
+                         'below articles from Adjust help center to answer the subsequent question. Search for '
+                         'information in '
+                         'the articles. If the answer cannot be found in the articles, write "I could not find an '
+                         'answer."',
+            model='gpt-4-1106-preview',
+        )
+    app.state.assistant = assistant
+
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 
 
 @app.get('/')
@@ -28,10 +48,11 @@ async def root():
 
 
 @app.post('/ask')
-async def ask(body: Model):
+async def ask(body: Model, request: Request):
+    client = request.app.state.client
     thread = client.beta.threads.create()
-    handler = OpenAPIHandler(body.question)
 
+    handler = OpenAPIHandler(body.question)
     question = handler.make_question()
 
     client.beta.threads.messages.create(
@@ -42,7 +63,7 @@ async def ask(body: Model):
 
     run = client.beta.threads.runs.create(
         thread_id=thread.id,
-        assistant_id=assistant.id,
+        assistant_id=request.app.state.assistant.id,
     )
 
     while run.status != 'completed':
