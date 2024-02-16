@@ -26,12 +26,11 @@ async def lifespan(app: FastAPI):
     else:
         assistant = client.beta.assistants.create(
             name='Adjust Advisor',
-            instructions='Adjust is an IT-company. You are an customer support expert in various Adjusts product. Use '
-                         'the '
-                         'below articles from Adjust help center to answer the subsequent question. Search for '
-                         'information in '
-                         'the articles. If the answer cannot be found in the articles, write "I could not find an '
-                         'answer."',
+            instructions=(
+                'Adjust is an IT-company. You are an customer support expert in various Adjusts product. Use the '
+                'below articles from Adjust help center to answer the subsequent question. Search for information in '
+                'the articles. If the answer cannot be found in the articles, write "I could not find an answer."'
+            ),
             model='gpt-4-1106-preview',
         )
     app.state.assistant = assistant
