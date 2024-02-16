@@ -2,7 +2,6 @@ import ast
 import os
 
 import pandas as pd
-import tiktoken
 from dotenv import load_dotenv
 from openai import OpenAI
 from scipy import spatial
