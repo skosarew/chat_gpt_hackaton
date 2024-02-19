@@ -14,14 +14,15 @@ load_dotenv()
 api_key = os.environ.get('OPENAI_API_KEY')
 client = OpenAI(api_key=api_key)
 
-contentful_client = contentful.Client(
-    os.environ.get('CONTENTFUL_SPACE_ID'),
-    os.environ.get('CONTENTFUL_TOKEN'),
-)
-entries = contentful_client.entries({'content_type': 'article', 'limit': 1000})
-entries_items = entries.items
 
-content = [entry.raw['fields']['title'] + '\n\n' + entry.raw['fields']['body'] for entry in entries.items]
+def get_content():
+    contentful_client = contentful.Client(
+        os.environ.get('CONTENTFUL_SPACE_ID'),
+        os.environ.get('CONTENTFUL_TOKEN'),
+    )
+    entries = contentful_client.entries({'content_type': 'article', 'limit': 1000})
+
+    return [entry.raw['fields']['title'] + '\n\n' + entry.raw['fields']['body'] for entry in entries.items]
 
 
 def split_strings_from_subsection(string):
@@ -31,6 +32,8 @@ def split_strings_from_subsection(string):
     else:
         return string[:len(string) // 2], string[len(string) // 2:]
 
+
+content = get_content()
 
 pages = []
 for section in content:
