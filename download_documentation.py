@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from constants import EMBEDDING_MODEL
+from constants import EMBEDDING_MODEL, MAX_TOKENS
 from helpers import num_tokens
 
 BATCH_SIZE = 1000  # you can submit up to 2048 embedding inputs per request
@@ -24,9 +24,9 @@ entries_items = entries.items
 content = [entry.raw['fields']['title'] + '\n\n' + entry.raw['fields']['body'] for entry in entries.items]
 
 
-def split_strings_from_subsection(string, max_tokens):
+def split_strings_from_subsection(string):
     num_tokens_in_string = num_tokens(string)
-    if num_tokens_in_string <= max_tokens:
+    if num_tokens_in_string <= MAX_TOKENS:
         return [string]
     else:
         return string[:len(string) // 2], string[len(string) // 2:]
@@ -34,7 +34,7 @@ def split_strings_from_subsection(string, max_tokens):
 
 pages = []
 for section in content:
-    pages.extend(split_strings_from_subsection(section, max_tokens=1600))
+    pages.extend(split_strings_from_subsection(section))
 
 embeddings = []
 for batch_start in range(0, len(pages), BATCH_SIZE):
