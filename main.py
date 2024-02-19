@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from openai import OpenAI
 
+from constants import GPT_MODEL
 from handler import OpenAPIHandler
 from models import Model
 
@@ -31,7 +32,7 @@ async def lifespan(app: FastAPI):
                 'below articles from Adjust help center to answer the subsequent question. Search for information in '
                 'the articles. If the answer cannot be found in the articles, write "I could not find an answer."'
             ),
-            model='gpt-4-1106-preview',
+            model=GPT_MODEL,
         )
     app.state.assistant = assistant
 

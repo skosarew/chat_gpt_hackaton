@@ -1,7 +1,9 @@
 import tiktoken
 
+from constants import GPT_MODEL
 
-def num_tokens(text: str, model: str = "gpt-4") -> int:
-    encoding = tiktoken.encoding_for_model(model)
+
+def num_tokens(text: str) -> int:
+    encoding = tiktoken.encoding_for_model(GPT_MODEL)
 
     return len(encoding.encode(text))
