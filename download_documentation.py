@@ -5,6 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
+from constants import EMBEDDING_MODEL
 from helpers import num_tokens
 
 BATCH_SIZE = 1000  # you can submit up to 2048 embedding inputs per request
@@ -41,7 +42,7 @@ for batch_start in range(0, len(pages), BATCH_SIZE):
     batch = pages[batch_start:batch_end]
     print(f"Batch {batch_start} to {batch_end - 1}")
 
-    response = client.embeddings.create(model='gpt-4', input=batch)
+    response = client.embeddings.create(model=EMBEDDING_MODEL, input=batch)
 
     for i, be in enumerate(response.data):
         assert i == be.index  # double check embeddings are in same order as input

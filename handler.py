@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from scipy import spatial
 
+from constants import EMBEDDING_MODEL
 from helpers import num_tokens
 
 load_dotenv()
@@ -45,7 +46,7 @@ class OpenAPIHandler:
     ) -> tuple[list[str], list[float]]:
         client = OpenAI(api_key=api_key)
 
-        query_embedding_response = client.embeddings.create(model='text-embedding-3-small', input=self.question)
+        query_embedding_response = client.embeddings.create(model=EMBEDDING_MODEL, input=self.question)
         query_embedding = query_embedding_response.data[0].embedding
 
         strings_and_relatednesses = [
