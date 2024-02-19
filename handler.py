@@ -20,10 +20,7 @@ class OpenAPIHandler:
         question = f'\n\nQuestion: {self.question}'
         message = ''
         for string in strings:
-            if (
-                num_tokens(message + string + question)
-                > token_budget
-            ):
+            if num_tokens(message + string + question) > token_budget:
                 break
             else:
                 message += string
