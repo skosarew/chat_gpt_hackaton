@@ -34,10 +34,7 @@ def split_strings_from_subsection(string):
 
 
 content = get_content()
-
-pages = []
-for section in content:
-    pages.extend(split_strings_from_subsection(section))
+pages = [y for section in content for y in split_strings_from_subsection(section)]
 
 embeddings = []
 for batch_start in range(0, len(pages), BATCH_SIZE):
