@@ -15,17 +15,13 @@ class OpenAPIHandler:
         self.client = client
         self.question = question
 
-    def make_question(
-        self,
-        token_budget: int = 4096 - 500,
-        model: str = 'gpt-4',
-    ) -> str:
+    def make_question(self, token_budget: int = 4096 - 500) -> str:
         strings, _ = self.strings_ranked_by_relatedness()
         question = f'\n\nQuestion: {self.question}'
         message = ''
         for string in strings:
             if (
-                num_tokens(message + string + question, model=model)
+                num_tokens(message + string + question)
                 > token_budget
             ):
                 break
