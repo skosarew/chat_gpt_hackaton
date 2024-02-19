@@ -1,23 +1,18 @@
 import ast
-import os
 
 import pandas as pd
-from dotenv import load_dotenv
-from openai import OpenAI
 from scipy import spatial
 
 from constants import EMBEDDING_MODEL
 from helpers import num_tokens
-
-load_dotenv()
-api_key = os.environ.get('OPENAI_API_KEY')
 
 df = pd.read_csv('./data.csv')
 df['embedding'] = df['embedding'].apply(ast.literal_eval)
 
 
 class OpenAPIHandler:
-    def __init__(self, question):
+    def __init__(self, client, question):
+        self.client = client
         self.question = question
 
     def make_question(
@@ -44,9 +39,7 @@ class OpenAPIHandler:
         relatedness_fn=lambda x, y: 1 - spatial.distance.cosine(x, y),
         top_n: int = 100,
     ) -> tuple[list[str], list[float]]:
-        client = OpenAI(api_key=api_key)
-
-        query_embedding_response = client.embeddings.create(model=EMBEDDING_MODEL, input=self.question)
+        query_embedding_response = self.client.embeddings.create(model=EMBEDDING_MODEL, input=self.question)
         query_embedding = query_embedding_response.data[0].embedding
 
         strings_and_relatednesses = [
