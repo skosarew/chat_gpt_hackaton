@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from constants import EMBEDDING_MODEL, MAX_TOKENS, BATCH_SIZE
+from constants import BATCH_SIZE, EMBEDDING_MODEL, MAX_TOKENS
 from helpers import num_tokens
 
 load_dotenv()

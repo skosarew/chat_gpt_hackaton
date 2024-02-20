@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 from fastapi import FastAPI, Request
+from fastapi.responses import PlainTextResponse
 from openai import OpenAI
 
 from constants import GPT_MODEL
@@ -73,6 +74,6 @@ async def ask(body: Model, request: Request):
         )
 
     messages = client.beta.threads.messages.list(thread_id=thread.id)
-    ans = [message.content[0].text.value for message in messages.data if message.role == 'assistant']
+    answer = [message.content[0].text.value for message in messages.data if message.role == 'assistant'][0]
 
-    return ans[0]
+    return PlainTextResponse(answer)
