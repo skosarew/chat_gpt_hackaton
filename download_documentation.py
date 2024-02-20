@@ -13,7 +13,7 @@ api_key = os.environ.get('OPENAI_API_KEY')
 client = OpenAI(api_key=api_key)
 
 
-def get_content():
+def get_pages():
     contentful_client = contentful.Client(
         os.environ.get('CONTENTFUL_SPACE_ID'),
         os.environ.get('CONTENTFUL_TOKEN'),
@@ -23,16 +23,16 @@ def get_content():
     return [entry.raw['fields']['title'] + '\n\n' + entry.raw['fields']['body'] for entry in entries.items]
 
 
-def split_strings_from_subsection(string):
-    num_tokens_in_string = num_tokens(string)
+def split_page(page):
+    num_tokens_in_string = num_tokens(page)
     if num_tokens_in_string <= MAX_TOKENS:
-        return [string]
+        return [page]
     else:
-        return string[:len(string) // 2], string[len(string) // 2:]
+        return page[:len(page) // 2], page[len(page) // 2:]
 
 
-content = get_content()
-pages = [y for section in content for y in split_strings_from_subsection(section)]
+pages = get_pages()
+pages = [section for page in pages for section in split_page(page)]
 
 embeddings = [
     e.embedding
