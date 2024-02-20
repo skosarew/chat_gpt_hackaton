@@ -34,12 +34,11 @@ def split_strings_from_subsection(string):
 content = get_content()
 pages = [y for section in content for y in split_strings_from_subsection(section)]
 
-embeddings = []
-for batch_start in range(0, len(pages), BATCH_SIZE):
-    batch = pages[batch_start:batch_start + BATCH_SIZE]
-    response = client.embeddings.create(model=EMBEDDING_MODEL, input=batch)
-
-    embeddings.extend([e.embedding for e in response.data])
+embeddings = [
+    e.embedding
+    for batch_start in range(0, len(pages), BATCH_SIZE)
+    for e in client.embeddings.create(model=EMBEDDING_MODEL, input=pages[batch_start:batch_start + BATCH_SIZE]).data
+]
 
 df = pd.DataFrame({"text": pages, "embedding": embeddings})
 
