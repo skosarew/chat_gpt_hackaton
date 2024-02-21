@@ -17,6 +17,7 @@ def get_pages():
     contentful_client = contentful.Client(
         os.environ.get('CONTENTFUL_SPACE_ID'),
         os.environ.get('CONTENTFUL_TOKEN'),
+        timeout_s=10,
     )
     entries = contentful_client.entries({'content_type': 'article', 'limit': 1000})
 
