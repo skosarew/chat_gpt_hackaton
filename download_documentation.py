@@ -5,7 +5,7 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from constants import BATCH_SIZE, EMBEDDING_MODEL, MAX_TOKENS, CONTENTFUL_LIMIT
+from constants import BATCH_SIZE, CONTENTFUL_LIMIT, EMBEDDING_MODEL, PAGE_TOKEN_LIMIT
 from helpers import num_tokens
 
 load_dotenv()
@@ -59,8 +59,8 @@ def get_pages():
 
 
 def split_page(page):
-    num_tokens_in_string = num_tokens(page)
-    if num_tokens_in_string <= MAX_TOKENS:
+    num_tokens_in_page = num_tokens(page)
+    if num_tokens_in_page <= PAGE_TOKEN_LIMIT:
         return [page]
     else:
         return page[:len(page) // 2], page[len(page) // 2:]

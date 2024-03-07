@@ -3,7 +3,7 @@ import ast
 import pandas as pd
 from scipy import spatial
 
-from constants import EMBEDDING_MODEL
+from constants import EMBEDDING_MODEL, QUESTION_TOKEN_LIMIT
 from helpers import num_tokens
 
 df = pd.read_csv('./data.csv')
@@ -15,12 +15,12 @@ class OpenAPIHandler:
         self.client = client
         self.question = question
 
-    def make_question(self, token_budget: int = 4096 - 500) -> str:
+    def make_question(self) -> str:
         strings, _ = self.strings_ranked_by_relatedness()
         question = f'\n\nQuestion: {self.question}'
         message = ''
         for string in strings:
-            if num_tokens(message + string + question) > token_budget:
+            if num_tokens(message + string + question) > QUESTION_TOKEN_LIMIT:
                 break
             else:
                 message += string
