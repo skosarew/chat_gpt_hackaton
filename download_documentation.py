@@ -5,8 +5,9 @@ import pandas as pd
 from dotenv import load_dotenv
 from openai import OpenAI
 
-from constants import (BATCH_SIZE, CONTENTFUL_LIMIT, EMBEDDING_MODEL,
-                       PAGE_TOKEN_LIMIT)
+from constants import (
+    BATCH_SIZE, CONTENTFUL_LIMIT, EMBEDDING_MODEL, PAGE_TOKEN_LIMIT,
+)
 from helpers import num_tokens
 
 load_dotenv()
