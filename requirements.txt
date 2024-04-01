@@ -10,3 +10,4 @@ contentful
 matplotlib
 flake8
 isort
+mypy
